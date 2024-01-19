@@ -1,113 +1,99 @@
 <?php
+require "../conexion.php";
+$usuarios = mysqli_query($conexion, "SELECT * FROM usuario");
+$total['usuarios'] = mysqli_num_rows($usuarios);
+$clientes = mysqli_query($conexion, "SELECT * FROM cliente");
+$total['clientes'] = mysqli_num_rows($clientes);
+$productos = mysqli_query($conexion, "SELECT * FROM producto");
+$total['productos'] = mysqli_num_rows($productos);
+$ventas = mysqli_query($conexion, "SELECT * FROM ventas WHERE fecha > CURDATE()");
+$total['ventas'] = mysqli_num_rows($ventas);
 session_start();
-if (!empty($_SESSION['active'])) {
-    header('location: src/');
-} else {
-    if (!empty($_POST)) {
-        $alert = '';
-        if (empty($_POST['usuario']) || empty($_POST['clave'])) {
-            $alert = '<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        Ingrese usuario y contraseña
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>';
-        } else {
-            require_once "conexion.php";
-            $user = mysqli_real_escape_string($conexion, $_POST['usuario']);
-            $clave = md5(mysqli_real_escape_string($conexion, $_POST['clave']));
-            $query = mysqli_query($conexion, "SELECT * FROM usuario WHERE usuario = '$user' AND clave = '$clave'");
-            mysqli_close($conexion);
-            $resultado = mysqli_num_rows($query);
-            if ($resultado > 0) {
-                $dato = mysqli_fetch_array($query);
-                $_SESSION['active'] = true;
-                $_SESSION['idUser'] = $dato['idusuario'];
-                $_SESSION['nombre'] = $dato['nombre'];
-                $_SESSION['user'] = $dato['usuario'];
-                header('Location: src/');
-            } else {
-                $alert = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        Contraseña incorrecta
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>';
-                session_destroy();
-            }
-        }
-    }
-}
+include_once "includes/header.php";
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
-    <title>Pet-Ya</title>
-    
-  <  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="css/styleJS.css">
-	<link rel="stylesheet" href="assets/css/material-dashboard.css">
-    <link rel="stylesheet" href="assets/css/estilos.css">
-</head>
-<body>
-    <div style="display: flex;justify-content: space-between;">
-        <div class="container" style="display: none;">
-            <center><b class="title label mb-2">Login</b></center>
-            <form action="" id="login-form" method="POST">
-                <div class="user-details">
-                    <div class="input-box">
-                        <input type="text" class="input-field" name="usuario" id="usuario" placeholder="Usuario" autocomplete="off" required>
-                    </div>
-                    <div class="input-box">
-                        <input type="password" class="input-field" name="clave" id="clave" placeholder="Contraseña" autocomplete="off" required>
-                    </div>
-					<?php echo (isset($alert)) ? $alert : '' ; ?>
-                    <div class="button">
-                        <input type="submit" value="Login">
-                    </div>
+<!-- Content Row -->
+<div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-warning card-header-icon">
+                <div class="card-icon">
+                    <i class="fas fa-user fa-2x"></i>
                 </div>
-                <center>
-                    <input type="checkbox" id="toggle" onclick="changeMode();">
-                </center>
-            </form>
+                <a href="usuarios.php" class="card-category text-warning font-weight-bold">
+                    Usuarios
+                </a>
+                <h3 class="card-title"><?php echo $total['usuarios']; ?></h3>
+            </div>
+            <div class="card-footer bg-warning text-white">
+            </div>
         </div>
-
     </div>
-	<script src="assets/js/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
-	<script src="assets/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
-    <script>
-        var rootProp = document.documentElement.style;
-        var mode = true;
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-success card-header-icon">
+                <div class="card-icon">
+                    <i class="fas fa-users fa-2x"></i>
+                </div>
+                <a href="clientes.php" class="card-category text-success font-weight-bold">
+                    Clientes
+                </a>
+                <h3 class="card-title"><?php echo $total['clientes']; ?></h3>
+            </div>
+            <div class="card-footer bg-secondary text-white">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-danger card-header-icon">
+                <div class="card-icon">
+                    <i class="fab fa-product-hunt fa-2x"></i>
+                </div>
+                <a href="productos.php" class="card-category text-danger font-weight-bold">
+                    Productos
+                </a>
+                <h3 class="card-title"><?php echo $total['productos']; ?></h3>
+            </div>
+            <div class="card-footer bg-primary">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-info card-header-icon">
+                <div class="card-icon">
+                    <i class="fas fa-cash-register fa-2x"></i>
+                </div>
+                <a href="ventas.php" class="card-category text-info font-weight-bold">
+                    Ventas
+                </a>
+                <h3 class="card-title"><?php echo $total['ventas']; ?></h3>
+            </div>
+            <div class="card-footer bg-danger text-white">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+		<div class="card">
+            <div class="card-header card-header-primary">
+                <h3 class="title-2 m-b-40">Productos con stock mínimo</h3>
+            </div>
+            <div class="card-body">
+			<canvas id="stockMinimo"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+	<div class="card">
+            <div class="card-header card-header-primary">
+                <h3 class="title-2 m-b-40">Productos más vendidos</h3>
+            </div>
+            <div class="card-body">
+			<canvas id="ProductosVendidos"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
 
-        function changeMode() {
-            if (mode) {
-                darkMode();
-            } else {
-                lightMode();
-            }
-            mode = !mode;
-        }
-
-        function lightMode() {
-            rootProp.setProperty("--background1", "rgba(230, 230, 230)");
-            rootProp.setProperty("--shadow1", "rgba(119, 119, 119, 0.5)");
-            rootProp.setProperty("--shadow2", "rgba(255, 255, 255, 0.85)");
-            rootProp.setProperty("--labelColor", "black");
-        }
-
-        function darkMode() {
-            rootProp.setProperty("--background1", "rgb(9 25 33)");
-            rootProp.setProperty("--shadow1", "rgb(0 0 0 / 45%)");
-            rootProp.setProperty("--shadow2", "rgb(255 255 255 / 12%)");
-            rootProp.setProperty("--labelColor", "rgb(255 255 255 / 59%)");
-        }
-    </script>
-</body>
-
-</html>
+<?php include_once "includes/footer.php"; ?>
