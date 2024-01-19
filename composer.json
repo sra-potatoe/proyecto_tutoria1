@@ -1,0 +1,16 @@
+{
+    "name": "erick/pet-shop",
+    "description": "proyecto_de_sistemas_!",
+    "autoload": {
+        "psr-4": {
+            "Erick\\PetShop\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Yannel Erika",
+            "email": "132903272+sra-potatoe@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
